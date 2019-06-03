@@ -18,9 +18,13 @@ int main()
 
 	assert (matr_test.size() == 1);
 
-	// for (auto c: matr)
+	// for (const auto c :matr_test)
 	// {
-
+	// 	int x;
+	// 	int y;
+	// 	int v;
+	// 	std::tie(x,y,v) = c;
+	// 	std::cout << x << y << v << std::endl;
 	// }
 
 
@@ -45,6 +49,15 @@ int main()
 	matr[7][2] = 2;
 	matr[8][1] = 1;
 	matr[9][0] = 0;
+
+	for (const auto c: matr)
+	{
+		int x,y,v;
+		std::tie(x,y,v) = c;
+
+		//std::cout << "r= " << x << " c= " << y << " v= " << v << std::endl;
+	}
+
 
 	std::cout << "for_test=" << matr[9][0].cell_value() << std::endl;
 	std::cout << "ocuppied cells = " << matr.size()  <<  std::endl;
