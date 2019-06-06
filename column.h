@@ -1,9 +1,6 @@
 #pragma once
 
 #include <map>
-#include "cell.h"
-
-
 
 template <typename T>
 class column{
