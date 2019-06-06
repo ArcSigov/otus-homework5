@@ -3,7 +3,6 @@
 #include <map>
 #include <tuple>
 #include <memory>
-#include <type_traits>
 
 
 #include "column.h"
@@ -23,7 +22,7 @@ public:
 	 auto  operator()(const int row, const int column);
 	 auto begin();
 	 auto end();
-     	 auto size() const; 
+     auto size() const; 
 	 void set(const int row, const int column, T value);
 	 
 private:
@@ -105,7 +104,7 @@ void matrix<T,def_val>::set(const int _row, const int _column, T _value)
 	{
 		it->second[_column]=_value;
 	}
-	else
+	else if (_value != def_val)
 	{
 		bool b; 
 		std::tie(it,b) = _matrix.emplace(_row,column<T>(_default));
