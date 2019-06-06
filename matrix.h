@@ -23,7 +23,7 @@ public:
 	 auto  operator()(const int row, const int column);
 	 auto begin();
 	 auto end();
-     auto size() const; 
+     	 auto size() const; 
 	 void set(const int row, const int column, T value);
 	 
 private:
