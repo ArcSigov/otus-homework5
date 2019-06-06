@@ -76,6 +76,10 @@ auto matrix<T,def_val>::begin()
 		{
 			if (it1->second.cell_size())
 			{
+				if (output.find(pos)!=output.end())
+				{
+					output.erase(pos);
+				}
 				output.emplace(pos,std::make_tuple(it->first,it1->first,it1->second.get_value()));
 				pos++;
 			}		

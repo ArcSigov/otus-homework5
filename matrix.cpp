@@ -50,6 +50,16 @@ int main()
 		std::cout << x << y << v << std::endl;
 	}
 	
+	for (auto c: matr)
+	{
+		int x;
+		int y;
+		int v;
+		std::tie(x,y,v) = c;
+		std::cout << x << y << v << std::endl;
+	}
+
+
 	std::cout << std::endl;
 	((matr[100][100] = 314) = 0) = 217;
 	std::cout << matr(100,100) << std::endl;
