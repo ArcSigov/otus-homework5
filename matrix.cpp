@@ -4,29 +4,7 @@
 
 int main()
 {
-  	matrix <int, -1> matr_test;
-	matrix <int, 0> matr;
-
-	auto a = matr_test[0][0];
-
-	assert(a == -1);
-	assert(matr_test.size() == 0);
-
-	matr_test[100][100] = 314;
-	
-	assert (matr_test[100][100] == 314);
-
-	assert (matr_test.size() == 1);
-
-	// for (const auto c :matr_test)
-	// {
-	// 	int x;
-	// 	int y;
-	// 	int v;
-	// 	std::tie(x,y,v) = c;
-	// 	std::cout << x << y << v << std::endl;
-	// }
-
+ 	matrix <int, 0> matr;
 
 	matr[0][0] = 0;
 	matr[1][1] = 1;
@@ -50,17 +28,26 @@ int main()
 	matr[8][1] = 1;
 	matr[9][0] = 0;
 
-	for (const auto c: matr)
+	for (auto i = 1 ; i < 9 ; i++)
 	{
-		int x,y,v;
-		std::tie(x,y,v) = c;
-
-		//std::cout << "r= " << x << " c= " << y << " v= " << v << std::endl;
+		for (auto j = 1 ; j < 9; j++)
+		{
+			std::cout << matr(i,j) << " " ;
+		}
+		std::cout << std::endl;
 	}
-
-
-	std::cout << "for_test=" << matr[9][0].cell_value() << std::endl;
+	
+	std::cout << std::endl;
 	std::cout << "ocuppied cells = " << matr.size()  <<  std::endl;
+	std::cout << std::endl;
+
+	for (auto c: matr)
+	{
+		int x;
+		int y;
+		int v;
+		std::tie(x,y,v) = c;
+		std::cout << x << y << v << std::endl;
+	}
 	return 1;
 }
-

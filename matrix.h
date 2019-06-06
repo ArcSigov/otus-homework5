@@ -1,137 +1,58 @@
 #pragma once
 
 #include <map>
-#include "column.h"
 #include <tuple>
 #include <memory>
+#include <type_traits>
 
 
-template <typename T>
-class matrix_iterator
-{
+#include "column.h"
+#include "matrix_iterator.h"
+
+template <typename T, T def_val>
+class matrix{
+	static constexpr T _default = def_val;
+	using matrix_pool = std::map<const int, column<T>>;
+	using output_pool = std::map<const int, std::tuple<const int,const int,T>>;
 public:
-	 matrix_iterator(typename std::map<const int,column<T>>::iterator iteratr);
-	~matrix_iterator();
-	
-	 bool operator!=(matrix_iterator<T> const& other) const{
-		 return _it != other._it;
-	 };
-     bool operator==(matrix_iterator<T> const& other) const{
-		 return _it == other._it;
-	 }; 
-     
-	 auto operator*() const
-	 {
-		return std::make_tuple(_row,_column,value);
-	 }
-     
-	 auto operator++()
-	 {
-		 auto asize = 0;
-		 auto col_start = _it->second.column_begin();
-		 
-		 col_start->second.cell_value();
-		//  static auto it1 = _it->second.column_begin();
-		//  if (it1 !=_it->second.column_end() && it1->second.cell_size() != 0) //!< если существует строка
-		//  {
-		// 	this->_row    = _it->first;
-		// 	this->_column = it1->first;
-		// 	this->value   = it1->second.cell_value();
-		// 	it1++;
-		// 	std::cout << "tut" << std::endl;
-		//  }
-		//  else
-		//  {
-		// 	 _it++;
-		// 	 it1 = _it->second.column_begin();
-		// 	 std::cout << "utut" << std::endl;
-		//  }
-		 return *this;
-	 };
-
-private:
-	typename std::map<const int,column<T>>::iterator _it;
-	int _row;
-	int _column;
-	T   value;
-};
-
-template<typename T>
-matrix_iterator<T>::matrix_iterator(typename std::map<const int,column<T>>::iterator iteratr) : _it(iteratr), _row(0), _column(0),value(0) {};
-
-template<typename T>
-matrix_iterator<T>::~matrix_iterator(){};
-
-
-template <typename T, int def_val>
-class matrix  {
-	static constexpr int _default = def_val;
-public:
-
-	
 	 matrix();
-	 matrix(const matrix&&) = delete;
+	 matrix(const matrix&) = delete;
+	 matrix operator = (matrix& other) = delete;
 	~matrix();
-
-	 matrix_iterator<T> begin()
-	 {
-		 auto ttt = _matrix.begin();
-		 while (ttt!= _matrix.end())
-		 {
-			 auto sss = ttt->second.column_begin();
-			 
-
-			 while (sss!= ttt->second.column_end())
-			 {
-				 std::cout << " beg=" << ttt->first ;
-			 	 std::cout << " col=" << sss->first;
-				 std::cout << " val=" << sss->second.cell_value();
-				 std::cout <<std::endl;
-				 sss++;
-			 }
-			 std::cout <<std::endl;
-			 ttt++;
-		 }
-		
-	 	 return matrix_iterator<T>(_matrix.begin());
-	 }
-	 matrix_iterator<T> end()
-	 {
-	 	 return matrix_iterator<T>(_matrix.end());
-	 }
-
-	column<T>& operator[](const int row);
-	std::size_t size() const;
+	 auto& operator[](const int row);
+	 auto  operator()(const int row, const int column);
+	 auto begin();
+	 auto end();
+     auto size() const; 
+	 void set(const int row, const int column, T value);
+	 
 private:
-	std::map<const int, column<T>> _matrix{};
+	matrix_pool _matrix{};
+	output_pool output;
 };
 
 
-template <typename T, int def_val>
+template <typename T, T def_val>
 matrix<T,def_val>::matrix(){}
 
-template <typename T, int def_val>
+template <typename T, T def_val>
 matrix<T,def_val>::~matrix(){}
 
 
 
-template <typename T, int def_val>
-std::size_t matrix<T,def_val>::size() const
+template <typename T, T def_val>
+auto matrix<T,def_val>::size() const
 {
 	 auto asize = 0;
 	 for (auto it = _matrix.cbegin() ; it != _matrix.cend(); ++it)
 	 {
-		for (auto it1 = it->second.column_begin(); it1 != it->second.column_end(); ++it1)
-		{
-			asize += it1->second.cell_size();
-		}		
+		  asize += it->second.size();	
 	 }
 	return asize;
 }
 
-//!<конструирует на месте новую строку матрицы и возвращает ее пользователю
-template <typename T, int def_val>
-column<T>& matrix<T,def_val>::operator[](const int row) 
+template <typename T, T def_val>
+auto& matrix<T,def_val>::operator[](const int row) 
 {
 	auto it = _matrix.find(row);
 	if (it == _matrix.end())
@@ -141,4 +62,61 @@ column<T>& matrix<T,def_val>::operator[](const int row)
 		std::tie(it,b) = _matrix.emplace(row,column);
 	}
 	return it->second;
+}
+
+template <typename T, T def_val>
+auto matrix<T,def_val>::begin()
+{
+	auto pos = 0;
+	auto it = _matrix.begin();
+	while (it!=_matrix.end())
+	{
+		auto it1 = it->second.column_begin();
+		while (it1 != it->second.column_end())
+		{
+			if (it1->second.cell_size())
+			{
+				output.emplace(pos,std::make_tuple(it->first,it1->first,it1->second.get_value()));
+				pos++;
+			}		
+			it1++;
+		}
+		it++;
+	}
+ 	return  matrix_iterator<T>(output.begin());
+}
+
+template <typename T, T def_val>
+auto matrix<T,def_val>::end()
+{
+	return matrix_iterator<T>(output.end());
+}
+
+template <typename T, T def_val>
+void matrix<T,def_val>::set(const int _row, const int _column, T _value)
+{
+	auto it = _matrix.find(_row);
+
+	if (it!= _matrix.end())
+	{
+		it->second[_column]=_value;
+	}
+	else
+	{
+		bool b; 
+		std::tie(it,b) = _matrix.emplace(_row,column<T>(_default));
+		it->second[_column] = _value;
+	}
+}
+
+template <typename T, T def_val>
+auto matrix<T,def_val>::operator()(const int row, const int column)
+{
+	auto it = _matrix.find(row);
+	
+	if (it != _matrix.end())
+	{
+		return it->second[column].get_value();
+	}	
+	return _default;
 }
