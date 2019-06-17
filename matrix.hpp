@@ -23,9 +23,8 @@ public:
     }
     bool operator == (const T& other)
     {
-        auto it = _matr.find(pair);
-        if (it!=_matr.end())
-            return it->second == other;
+        if (_matr.find(pair) != _matr.end())
+            return _matr[pair] == other;
         return other == def;
     }
     auto& operator = (const T& other)
