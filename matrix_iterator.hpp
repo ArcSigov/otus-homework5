@@ -7,7 +7,7 @@
 template <typename T>
 class matrix_iterator
 {
-	using  output_matrix_iterator = typename std::map<std::pair<int,int>,T>::iterator;
+	using  output_matrix_iterator = typename std::map<std::pair<std::size_t,std::size_t>,T>::iterator;
 public:
 	 matrix_iterator(output_matrix_iterator iteratr);
 	~matrix_iterator();

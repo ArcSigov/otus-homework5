@@ -9,41 +9,32 @@ template<typename T, T def>
 class physical_matrix 
 {
     static constexpr T _default = def;
-    using matrix_position = std::pair<int,int>;
+    using matrix_position = std::pair<std::size_t,std::size_t>;
 public:
     physical_matrix(){};
     auto size () const  
     {
         return _matr.size();
     }
-    auto& operator[](const unsigned int pos)
+    auto& operator[](const std::size_t& pos)
     {
         pair.second = pos;
         return *this;
     }
-    bool operator == (const T& other)
-    {
-        if (_matr.find(pair) != _matr.end())
-            return _matr[pair] == other;
-        return other == def;
-    }
     auto& operator = (const T& other)
     {
-        auto it = _matr.find(pair);
         if (other != _default)
         {
             _matr[pair] = other;
         }   
         else
         {
-           if (it != _matr.end())
-           {
-                _matr.erase(it->first);
-           }
+           if (_matr.find(pair) != _matr.end())
+               _matr.erase(_matr.find(pair)->first);
         }
         return *this;
     }
-    void set_row(const unsigned int& row)
+    void set_row(const std::size_t& row)
     {
         pair.first = row; 
     }
@@ -58,17 +49,15 @@ public:
 
     auto get() const
     {
-        if (_matr.find(pair) != _matr.end())
-            return _matr.at(pair);
+        auto it = _matr.find(pair);
+        if (it != _matr.end())
+            return it->second;
         return def;
     }
-
-    friend std::ostream& operator << (std::ostream &out, const physical_matrix<T,def> &phys)
+    operator auto()
     {
-        out << phys.get();
-        return out;
+        return get();
     }
-    
 private:
     matrix_position pair;
     std::map<matrix_position,T> _matr{};
@@ -98,7 +87,7 @@ public:
         return matrix_iterator<T>(real.end());
     }
 
-    auto& operator [] (const int& row)
+    auto& operator [] (const std::size_t& row)
     {
         real.set_row(row);
         return real;

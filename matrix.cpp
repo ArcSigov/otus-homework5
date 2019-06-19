@@ -6,13 +6,11 @@
 int main()
 {
  	 matrix <int, 0> matr;
-
+	
 	for (auto i = 0 ; i < 10 ; i++)
 	{
-		static auto j = 9;
 		matr[i][i] = i;
-		matr[i][j] = j;
-		j--;
+		matr[i][9-i] = 9-i;
 	}
 
 	for (auto i = 1 ; i < 9 ; i++)
