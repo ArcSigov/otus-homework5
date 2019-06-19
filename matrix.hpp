@@ -29,8 +29,9 @@ public:
         }   
         else
         {
-           if (_matr.find(pair) != _matr.end())
-               _matr.erase(_matr.find(pair)->first);
+           auto it = _matr.find(pair);
+           if ( it != _matr.end())
+               _matr.erase(it->first);
         }
         return *this;
     }
