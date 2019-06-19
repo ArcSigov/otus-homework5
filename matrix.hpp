@@ -46,14 +46,6 @@ public:
     {
         return _matr.end();
     }
-
-    auto get() const
-    {
-        auto it = _matr.find(pair);
-        if (it != _matr.end())
-            return it->second;
-        return def;
-    }
     operator auto()
     {
         return get();
@@ -61,6 +53,13 @@ public:
 private:
     matrix_position pair;
     std::map<matrix_position,T> _matr{};
+    auto get() const
+    {
+        auto it = _matr.find(pair);
+        if (it != _matr.end())
+            return it->second;
+        return def;
+    }
   };
 
 //!< proxy of real matr
